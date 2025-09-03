@@ -1,1 +1,1 @@
-# hotstar
+# hotstar app
