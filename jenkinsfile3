@@ -27,7 +27,7 @@ stage('Artifact') {
         }
     }
 }
-        }
+        
 
         stage('Build Docker Image') {
             steps {
@@ -35,7 +35,7 @@ stage('Artifact') {
             }
         }
 
-       /* stage('Push to DockerHub') {
+        stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',  // 🔹 Jenkins credential ID
@@ -68,7 +68,7 @@ stage('Artifact') {
             }
         }
 
-        stage('Deploy to Docker Swarm') {
+       /* stage('Deploy to Docker Swarm') {
             steps {
                 script {
                     sh '''
