@@ -16,7 +16,9 @@ pipeline {
 
      stage('Artifact') {
             steps {
-nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: '/var/lib/jenkins/workspace/disney-hotstar/target/myapp', type: 'war']], credentialsId: 'nexus_cred', groupId: 'org.codehaus.mojo', nexusUrl: 'http://3.111.169.255:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
+withMaven(globalMavenSettingsConfig: 'settings.xml', jdk: 'jdk17', maven: 'mvn3', traceability: true) {
+    // some block
+}
 }
         }
 
