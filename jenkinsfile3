@@ -6,6 +6,10 @@ pipeline {
         IMAGE_NAME      = 'myapp'
         IMAGE_TAG       = 'v1'
     }
+   tools {
+        jdk 'jdk17'
+        maven 'maven3'   // make sure this name matches Jenkins Global Tool config
+    }
 
     stages {
         stage('Build') {
