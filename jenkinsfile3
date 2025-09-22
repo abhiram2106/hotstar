@@ -16,7 +16,7 @@ pipeline {
 
      stage('Artifact') {
             steps {
-nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: '**/myapp.war', type: 'war']], credentialsId: 'nexus_cred', groupId: 'org.codehaus.mojo', nexusUrl: 'http://3.111.169.255:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
+nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: '/var/lib/jenkins/workspace/target/myapp.war', type: 'war']], credentialsId: 'nexus_cred', groupId: 'org.codehaus.mojo', nexusUrl: 'http://3.111.169.255:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
 }
         }
 
