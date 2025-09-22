@@ -14,6 +14,12 @@ pipeline {
             }
         }
 
+     stage('Artifact') {
+            steps {
+             nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: '**/*.war', type: 'war']], credentialsId: 'nexus_cred', groupId: 'org.codehaus.mojo', nexusUrl: 'http://3.111.169.255:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
+}
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
