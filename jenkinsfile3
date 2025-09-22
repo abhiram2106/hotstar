@@ -13,7 +13,7 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-
+      }
 stage('Artifact') {
     steps {
         withMaven(
