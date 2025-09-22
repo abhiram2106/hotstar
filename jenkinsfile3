@@ -14,11 +14,18 @@ pipeline {
             }
         }
 
-     stage('Artifact') {
-            steps {
-withMaven(globalMavenSettingsConfig: 'settings.xml', jdk: 'jdk17', maven: 'mvn3', traceability: true) {
-    // some block
-}
+stage('Artifact') {
+    steps {
+        withMaven(
+            globalMavenSettingsConfig: 'settings.xml',
+            jdk: 'jdk17',
+            maven: 'mvn3',
+            traceability: true
+        ) {
+            // This is where the Maven build happens
+            sh 'mvn clean deploy -B -U'
+        }
+    }
 }
         }
 
@@ -28,7 +35,7 @@ withMaven(globalMavenSettingsConfig: 'settings.xml', jdk: 'jdk17', maven: 'mvn3'
             }
         }
 
-        stage('Push to DockerHub') {
+       /* stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',  // 🔹 Jenkins credential ID
@@ -47,7 +54,7 @@ withMaven(globalMavenSettingsConfig: 'settings.xml', jdk: 'jdk17', maven: 'mvn3'
                     '''
                 }
             }
-        }
+        }      
 
         stage('Run Container (Local Test)') {
             steps {
@@ -74,7 +81,7 @@ withMaven(globalMavenSettingsConfig: 'settings.xml', jdk: 'jdk17', maven: 'mvn3'
                     '''
                 }
             }
-        }
+        }  */
     }
 }
 
