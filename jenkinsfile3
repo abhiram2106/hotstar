@@ -5,19 +5,35 @@ pipeline {
         DOCKER_HUB_USER = 'abhiram5673'  // DockerHub username
         IMAGE_NAME      = 'myapp'
         IMAGE_TAG       = 'v1'
-}
+    }
+
     stages {
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
             }
         }
-     }
-    stage('Artifact') {
+
+        stage('Artifact') {
             steps {
-               nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: '**/*.war', type: 'war']], credentialsId: 'nexus_cred', groupId: 'in.reyaz', nexusUrl: '3.109.133.64:8081', nexusVersion: 'nexus2', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
+                nexusArtifactUploader(
+                    artifacts: [[
+                        artifactId: 'myapp',
+                        classifier: '',
+                        file: '**/*.war',
+                        type: 'war'
+                    ]],
+                    credentialsId: 'nexus_cred',
+                    groupId: 'in.reyaz',
+                    nexusUrl: '3.109.133.64:8081',
+                    nexusVersion: 'nexus3',   // ❗ change to nexus3 if your Nexus is v3
+                    protocol: 'http',
+                    repository: 'hotstar',
+                    version: '8.3.3-SNAPSHOT'
+                )
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
@@ -72,6 +88,4 @@ pipeline {
             }
         }
     }
-
-
-
+}
