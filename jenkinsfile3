@@ -20,7 +20,7 @@ pipeline {
                     artifacts: [[
                         artifactId: 'myapp',
                         classifier: '',
-                        file: '**/*.war',
+                        file: 'target/myapp.war',
                         type: 'war'
                     ]],
                     credentialsId: 'nexus_cred',
