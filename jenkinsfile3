@@ -5,33 +5,19 @@ pipeline {
         DOCKER_HUB_USER = 'abhiram5673'  // DockerHub username
         IMAGE_NAME      = 'myapp'
         IMAGE_TAG       = 'v1'
-    }
-   tools {
-        jdk 'jdk17'
-        maven 'mvn3'   // make sure this name matches Jenkins Global Tool config
-    }
-
+}
     stages {
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
             }
         }
-
-        stage('Artifact') {
+     }
+    stage('Artifact') {
             steps {
-                withMaven(
-                    globalMavenSettingsConfig: 'settings.xml',
-                    jdk: 'jdk17',
-                    maven: 'mvn3',
-                    traceability: true
-                ) {
-                    // Deploy artifact to Nexus
-                    sh 'mvn clean deploy -B -U'
-                }
+               nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: '**/*.war', type: 'war']], credentialsId: 'nexus_cred', groupId: 'in.reyaz', nexusUrl: '3.109.133.64:8081', nexusVersion: 'nexus2', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
@@ -86,7 +72,6 @@ pipeline {
             }
         }
     }
-}
 
 
 
