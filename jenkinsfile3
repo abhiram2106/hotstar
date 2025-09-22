@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'abhiram5673'        // 🔹 your DockerHub username
+        DOCKER_HUB_USER = 'abhiram5673'  // DockerHub username
         IMAGE_NAME      = 'myapp'
         IMAGE_TAG       = 'v1'
     }
@@ -13,21 +13,20 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-      }
-stage('Artifact') {
-    steps {
-        withMaven(
-            globalMavenSettingsConfig: 'settings.xml',
-            jdk: 'jdk17',
-            maven: 'mvn3',
-            traceability: true
-        ) {
-            // This is where the Maven build happens
-            sh 'mvn clean deploy -B -U'
+
+        stage('Artifact') {
+            steps {
+                withMaven(
+                    globalMavenSettingsConfig: 'settings.xml',
+                    jdk: 'jdk17',
+                    maven: 'mvn3',
+                    traceability: true
+                ) {
+                    // Deploy artifact to Nexus
+                    sh 'mvn clean deploy -B -U'
+                }
+            }
         }
-    }
-}
-        
 
         stage('Build Docker Image') {
             steps {
@@ -38,7 +37,7 @@ stage('Artifact') {
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',  // 🔹 Jenkins credential ID
+                    credentialsId: 'dockerhub-creds',  // Jenkins credential ID
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
@@ -54,7 +53,7 @@ stage('Artifact') {
                     '''
                 }
             }
-        }      
+        }
 
         stage('Run Container (Local Test)') {
             steps {
@@ -62,13 +61,13 @@ stage('Artifact') {
                     sh 'docker rm -f myapp-cont || true'
                     sh 'docker run -d --name myapp-cont -p 8082:8080 ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}'
 
-                    // ✅ Show container logs in Jenkins console
+                    // Show container logs in Jenkins console
                     sh 'sleep 5 && docker logs myapp-cont'
                 }
             }
         }
 
-       stage('Deploy to Docker Swarm') {
+        stage('Deploy to Docker Swarm') {
             steps {
                 script {
                     sh '''
@@ -81,7 +80,9 @@ stage('Artifact') {
                     '''
                 }
             }
-        }  
-  }
+        }
+    }
+}
+
 
 
