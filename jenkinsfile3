@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'abhiram5673'  // DockerHub username
+        DOCKER_HUB_USER = 'abhiram5673'
         IMAGE_NAME      = 'myapp'
         IMAGE_TAG       = 'v1'
-        SONARQUBE_ENV = 'sq'
-      }
-
+        SONARQUBE_ENV   = 'sq'
+    }
 
     stages {
         stage('Build') {
@@ -15,22 +14,24 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-    }
-    stage('SonarQube Analysis') {
+
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_ENV}") {
                     sh 'mvn sonar:sonar'
                 }
             }
         }
-     stage('Quality Gate') {
+
+        stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
-    stage('Artifact') {
+
+        stage('Artifact') {
             steps {
                 nexusArtifactUploader(
                     artifacts: [[
@@ -42,7 +43,7 @@ pipeline {
                     credentialsId: 'nexus_cred',
                     groupId: 'in.reyaz',
                     nexusUrl: '13.201.126.105:8081',
-                    nexusVersion: 'nexus3',   // ❗ change to nexus3 if your Nexus is v3
+                    nexusVersion: 'nexus3',
                     protocol: 'http',
                     repository: 'hotstar',
                     version: '8.3.3-SNAPSHOT'
@@ -59,7 +60,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',  // Jenkins credential ID
+                    credentialsId: 'dockerhub-creds',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
@@ -82,14 +83,13 @@ pipeline {
                 script {
                     sh 'docker rm -f myapp-cont || true'
                     sh 'docker run -d --name myapp-cont -p 8083:8080 ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}'
-
-                    // Show container logs in Jenkins console
                     sh 'sleep 5 && docker logs myapp-cont'
                 }
             }
         }
 
-       /* stage('Deploy to Docker Swarm') {
+        /*
+        stage('Deploy to Docker Swarm') {
             steps {
                 script {
                     sh '''
@@ -102,5 +102,8 @@ pipeline {
                     '''
                 }
             }
-        } */
+        }
+        */
     }
+}
+
