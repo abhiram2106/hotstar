@@ -5,7 +5,9 @@ pipeline {
         DOCKER_HUB_USER = 'abhiram5673'  // DockerHub username
         IMAGE_NAME      = 'myapp'
         IMAGE_TAG       = 'v1'
-    }
+        SONARQUBE_ENV = 'sq'
+      }
+
 
     stages {
         stage('Build') {
@@ -13,8 +15,22 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-
-        stage('Artifact') {
+    }
+    stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE_ENV}") {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+     stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    stage('Artifact') {
             steps {
                 nexusArtifactUploader(
                     artifacts: [[
