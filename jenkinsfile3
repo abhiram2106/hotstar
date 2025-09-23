@@ -73,7 +73,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Docker Swarm') {
+       /* stage('Deploy to Docker Swarm') {
             steps {
                 script {
                     sh '''
@@ -86,6 +86,6 @@ pipeline {
                     '''
                 }
             }
-        }
+        } */
     }
 }
